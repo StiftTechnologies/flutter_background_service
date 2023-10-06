@@ -34,8 +34,12 @@ public class WatchdogReceiver extends BroadcastReceiver {
 
         PendingIntent pIntent = PendingIntent.getBroadcast(context, QUEUE_REQUEST_ID, intent, flags);
 
-        // Check is background service every 5 seconds
-        AlarmManagerCompat.setExact(manager, AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + millis, pIntent);
+        // Check service availability, respecting SDK level and permissions
+        if (SDK_INT >= Build.VERSION_CODES.S && !manager.canScheduleExactAlarms()) {
+            AlarmManagerCompat.setAndAllowWhileIdle(manager, AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + millis, pIntent);
+        } else {
+            AlarmManagerCompat.setExactAndAllowWhileIdle(manager, AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + millis, pIntent);
+        }
     }
 
     public static void remove(Context context) {
