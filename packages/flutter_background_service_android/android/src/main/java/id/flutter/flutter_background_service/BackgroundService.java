@@ -111,7 +111,23 @@ public class BackgroundService extends Service implements MethodChannel.MethodCa
         } else {
             config.setManuallyStopped(true);
         }
-        stopForeground(true);
+        // // https://stackoverflow.com/a/72754189
+         new Handler().postDelayed(new Runnable() {
+             @Override
+             public void run() {
+                 try {
+                     if (SDK_INT >= Build.VERSION_CODES.N) {
+                         stopForeground(STOP_FOREGROUND_REMOVE);
+                     } else {
+                         stopForeground(true);
+                     }
+                     config.setIsForeground(false);
+                     stopSelf();
+                 } catch (Exception e) {
+                     e.printStackTrace();
+                 }
+             }
+         }, 5000);
         isRunning.set(false);
 
         if (backgroundEngine != null) {
@@ -283,7 +299,11 @@ public class BackgroundService extends Service implements MethodChannel.MethodCa
                     updateNotificationInfo();
                     backgroundEngine.getServiceControlSurface().onMoveToForeground();
                 } else {
-                    stopForeground(true);
+                    if (SDK_INT >= Build.VERSION_CODES.N) {
+                        stopForeground(STOP_FOREGROUND_REMOVE);
+                    } else {
+                        stopForeground(true);
+                    }
                     backgroundEngine.getServiceControlSurface().onMoveToBackground();
                 }
 
