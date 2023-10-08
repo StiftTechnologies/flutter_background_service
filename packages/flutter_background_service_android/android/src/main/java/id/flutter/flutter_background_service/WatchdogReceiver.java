@@ -66,8 +66,12 @@ public class WatchdogReceiver extends BroadcastReceiver {
             }
 
             if (!config.isManuallyStopped() && !isRunning) {
-                if (config.isForeground()) {
-                    ContextCompat.startForegroundService(context, new Intent(context, BackgroundService.class));
+                if (config.isForeground() || SDK_INT >= Build.VERSION_CODES.O) {
+                    try {
+                        ContextCompat.startForegroundService(context, new Intent(context, BackgroundService.class));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     context.startService(new Intent(context, BackgroundService.class));
                 }
