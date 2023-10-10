@@ -19,7 +19,7 @@ public class WatchdogReceiver extends BroadcastReceiver {
     private static final String ACTION_RESPAWN = "id.flutter.background_service.RESPAWN";
 
     public static void enqueue(Context context) {
-        enqueue(context, 5000);
+        enqueue(context, 2500);
     }
 
     public static void enqueue(Context context, int millis) {
