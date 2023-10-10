@@ -1,7 +1,10 @@
 package id.flutter.flutter_background_service;
 
+import static android.os.Build.VERSION.SDK_INT;
+
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 
 public class Config {
     final SharedPreferences pref;
@@ -20,8 +23,8 @@ public class Config {
                 .apply();
     }
 
-    public boolean isForeground() {
-        return pref.getBoolean("is_foreground", false);
+        public boolean isForeground() {
+        return SDK_INT >= Build.VERSION_CODES.O || pref.getBoolean("is_foreground", false);
     }
 
     public void setIsForeground(boolean value) {
