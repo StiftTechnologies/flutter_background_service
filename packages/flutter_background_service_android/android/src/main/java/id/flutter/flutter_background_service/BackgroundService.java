@@ -11,6 +11,7 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ServiceInfo;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -180,9 +181,14 @@ public class BackgroundService extends Service implements MethodChannel.MethodCa
                     .setOngoing(true)
                     .setContentTitle(notificationTitle)
                     .setContentText(notificationContent)
+                    .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
                     .setContentIntent(pi);
 
-            startForeground(notificationId, mBuilder.build());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                startForeground(notificationId, mBuilder.build(), ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
+            } else {
+                startForeground(notificationId, mBuilder.build());
+            }
         }
     }
 
